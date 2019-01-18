@@ -3,6 +3,9 @@ package domain.contract
 import domain.{ ContractId, Error, Result, Timestamp, UserAccountId, WalletId }
 import domain.contract.Contract.WalletLimitOverError
 
+object WalletIds {
+  def apply(walletId: WalletId) = new WalletIds(Seq(walletId))
+}
 case class WalletIds(values: Seq[WalletId]) {
   def add(other: WalletIds): WalletIds =
     WalletIds(values ++ other.values)

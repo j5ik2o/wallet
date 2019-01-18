@@ -16,7 +16,7 @@ object PaymentService {
               createdAt: ZonedDateTime = ZonedDateTime.now()): Result[FromTo] = {
     for {
       newFrom <- from.pay(to.id, money, requestEventId, createdAt)
-      newTo   <- to.wasPaid(from.id, money, requestEventId, createdAt)
+      newTo   <- to.receivePayment(from.id, money, requestEventId, createdAt)
     } yield FromTo(newFrom, newTo)
   }
 
