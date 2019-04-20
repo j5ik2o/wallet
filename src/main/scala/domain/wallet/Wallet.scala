@@ -45,6 +45,7 @@ trait MoneyResource
 case class CreditCard(id: String, due: String, name: String) extends MoneyResource
 
 trait Wallet {
+
   def events: WalletEvents // ドメインイベントのコレクション
 
   def id: WalletId
@@ -55,6 +56,7 @@ trait Wallet {
 
   // チャージする
   def deposit(from: MoneyResource, money: Money, createdAt: Timestamp = ZonedDateTime.now()): Result[Wallet]
+
   // 請求する
   def request(toId: WalletId, money: Money, createdAt: Timestamp = ZonedDateTime.now()): Result[(Wallet, WalletEventId)]
 
@@ -79,7 +81,7 @@ trait Wallet {
 
 }
 
-case class WalletImpl(events: WalletEvents, snapshotBalanace: Money = Money.zero(Money.JPY)) extends Wallet {
+case class WalletImpl(events: WalletEvents, snapshotBalance: Money = Money.zero(Money.JPY)) extends Wallet {
 
   override lazy val id: WalletEventId            = events.walletId
   override lazy val contractId: ContractId       = events.contractId
@@ -87,7 +89,7 @@ case class WalletImpl(events: WalletEvents, snapshotBalanace: Money = Money.zero
   override lazy val createdAt: Timestamp         = events.createdAt
   override lazy val balance: Money = {
     // FIXME: ファーストクラスコレクションのリファクタ
-    events.breachEncapsulationOfEvents.reverse.foldLeft(snapshotBalanace) {
+    events.breachEncapsulationOfEvents.reverse.foldLeft(snapshotBalance) {
       case (r, MoneyDeposited(_, _, _, _, _, money, _)) =>
         r.plus(money)
       case (r, MoneyPaid(_, _, _, _, _, money, _, _)) =>
