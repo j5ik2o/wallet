@@ -7,12 +7,16 @@ object WalletIds {
   def apply(walletId: WalletId) = new WalletIds(Seq(walletId))
 }
 case class WalletIds(values: Seq[WalletId]) {
+
   def add(other: WalletIds): WalletIds =
     WalletIds(values ++ other.values)
+
   def add(other: WalletId): WalletIds =
     add(WalletIds(Seq(other)))
+
   def remove(other: WalletIds): WalletIds =
     WalletIds(values.filterNot(v => other.contains(v)))
+
   def remove(other: WalletId): WalletIds =
     remove(WalletIds(Seq(other)))
   def contains(walletId: WalletId): Boolean = values.contains(walletId)

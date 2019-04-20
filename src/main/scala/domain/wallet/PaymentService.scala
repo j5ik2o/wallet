@@ -9,11 +9,13 @@ object PaymentService {
 
   case class FromTo(from: Wallet, to: Wallet)
 
-  def execute(from: Wallet,
-              to: Wallet,
-              money: Money,
-              requestEventId: Option[WalletEventId] = None,
-              createdAt: ZonedDateTime = ZonedDateTime.now()): Result[FromTo] = {
+  def execute(
+      from: Wallet,
+      to: Wallet,
+      money: Money,
+      requestEventId: Option[WalletEventId] = None,
+      createdAt: ZonedDateTime = ZonedDateTime.now()
+  ): Result[FromTo] = {
     for {
       newFrom <- from.pay(to.id, money, requestEventId, createdAt)
       newTo   <- to.receivePayment(from.id, money, requestEventId, createdAt)

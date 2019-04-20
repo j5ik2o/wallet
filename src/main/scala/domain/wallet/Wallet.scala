@@ -57,19 +57,25 @@ trait Wallet {
   def deposit(from: MoneyResource, money: Money, createdAt: Timestamp = ZonedDateTime.now()): Result[Wallet]
   // 請求する
   def request(toId: WalletId, money: Money, createdAt: Timestamp = ZonedDateTime.now()): Result[(Wallet, WalletEventId)]
+
   // 支払う
-  def pay(toId: WalletId,
-          money: Money,
-          requestEventId: Option[WalletEventId] = None,
-          createdAt: Timestamp = ZonedDateTime.now()): Result[Wallet]
+  def pay(
+      toId: WalletId,
+      money: Money,
+      requestEventId: Option[WalletEventId] = None,
+      createdAt: Timestamp = ZonedDateTime.now()
+  ): Result[Wallet]
 
   // 請求される
   def receiveRequest(fromId: WalletId, money: Money, createdAt: Timestamp = ZonedDateTime.now()): Result[Wallet]
+
   // 支払われる
-  def receivePayment(fromId: WalletId,
-                     money: Money,
-                     requestEventId: Option[WalletEventId],
-                     createdAt: Timestamp = ZonedDateTime.now()): Result[Wallet]
+  def receivePayment(
+      fromId: WalletId,
+      money: Money,
+      requestEventId: Option[WalletEventId],
+      createdAt: Timestamp = ZonedDateTime.now()
+  ): Result[Wallet]
 
 }
 
@@ -130,10 +136,12 @@ case class WalletImpl(events: WalletEvents, snapshotBalanace: Money = Money.zero
         )
     }
 
-  override def pay(toId: WalletId,
-                   money: Money,
-                   requestEventId: Option[WalletEventId] = None,
-                   createdAt: Timestamp): Result[Wallet] = money match {
+  override def pay(
+      toId: WalletId,
+      money: Money,
+      requestEventId: Option[WalletEventId] = None,
+      createdAt: Timestamp
+  ): Result[Wallet] = money match {
     case m if m.currency != balance.currency =>
       Left(new InvalidCurrencyError("Invalid currency"))
     case m if balance.minus(money).isNegative =>
@@ -147,10 +155,12 @@ case class WalletImpl(events: WalletEvents, snapshotBalanace: Money = Money.zero
       )
   }
 
-  override def receivePayment(fromId: WalletId,
-                              money: Money,
-                              requestEventId: Option[WalletEventId],
-                              createdAt: Timestamp): Result[Wallet] = money match {
+  override def receivePayment(
+      fromId: WalletId,
+      money: Money,
+      requestEventId: Option[WalletEventId],
+      createdAt: Timestamp
+  ): Result[Wallet] = money match {
     case m if m.currency != balance.currency =>
       Left(new InvalidCurrencyError("Invalid currency"))
     case m if balance.plus(money).isNegative =>
